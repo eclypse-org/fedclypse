@@ -1,3 +1,4 @@
+from typing import Dict, List
 import fedray
 
 
@@ -23,13 +24,11 @@ class FedOptServer:
     def sample_clients(self):
         raise NotImplementedError
     
-    def on_client_receive(self, message: Message):
+    def on_client_receive(self, message):
         raise NotImplementedError
 
     def aggregate(self):
         raise NotImplementedError
-    
-    def 
           
 
 @fedray.node(mode='sync')
@@ -93,7 +92,7 @@ class AveragingOpt(ServerOpt):
         model_dict = {}
 
         for k in self.client_ids:
-            
+            pass
     
     @property
     def ready(self):

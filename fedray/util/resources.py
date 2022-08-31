@@ -39,6 +39,16 @@ def get_federated_process_resources(num_nodes_or_resources: Union[int, List[Dict
 def create_resources_split(num_nodes: int,
                            split_size: float = 1.,
                            split_strategy: Literal['random', 'uniform'] = 'uniform'):
+    """_summary_
+
+    Args:
+        num_nodes (int): _description_
+        split_size (float, optional): _description_. Defaults to 1..
+        split_strategy (Literal[&#39;random&#39;, &#39;uniform&#39;], optional): _description_. Defaults to 'uniform'.
+
+    Returns:
+        _type_: _description_
+    """
     available_resources = ray.available_resources()
     available_resources['CPU'] = (available_resources['CPU'] - SAFETY_EPSILON) * split_size - BROKER_CPU_RESOURCES
     if 'GPU' in available_resources:

@@ -1,5 +1,5 @@
 import ray
-from fedray.core._broker import FedRayBroker, Message
+from ._broker import FedRayBroker, Message
 
 from queue import Queue
 from functools import cached_property
