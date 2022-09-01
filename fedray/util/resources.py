@@ -13,7 +13,7 @@ SAFETY_EPSILON = 0.01
 def get_federated_process_resources(num_nodes_or_resources: Union[int, List[Dict[str, Union[int, float]]]],
                                     split_size: float = 1.,
                                     split_strategy: Literal['random', 'uniform'] = 'uniform',
-                                    placement_strategy: Literal['strict_pack', 'pack', 'strict_spread', 'spread'] = 'strict_pack',
+                                    placement_strategy: Literal['STRICT_PACK', 'PACK', 'STRICT_SPREAD', 'SPREAD'] = 'STRICT_PACK',
                                     is_tune: bool = False) -> Union[PlacementGroup, tune.PlacementGroupFactory]:
     """_summary_
 
@@ -29,7 +29,9 @@ def get_federated_process_resources(num_nodes_or_resources: Union[int, List[Dict
 
     if isinstance(num_nodes_or_resources, int):
         resources = create_resources_split(num_nodes_or_resources, split_size=split_size, split_strategy=split_strategy)
+        resources = _round_resources(resources)
     
+    print(resources)
     if not is_tune:
         return placement_group(bundles=resources, strategy=placement_strategy)
     else:
@@ -51,6 +53,7 @@ def create_resources_split(num_nodes: int,
     """
     available_resources = ray.available_resources()
     available_resources['CPU'] = (available_resources['CPU'] - SAFETY_EPSILON) * split_size - BROKER_CPU_RESOURCES
+    available_resources['CPU'] = available_resources['CPU']
     if 'GPU' in available_resources:
         available_resources['GPU'] = (available_resources['GPU'] - SAFETY_EPSILON) * split_size
 
@@ -75,3 +78,12 @@ def create_resources_split(num_nodes: int,
             resources.append(curr_resources)
     
     return [{'CPU': BROKER_CPU_RESOURCES}] + resources
+
+
+def _round_resources(resources):
+    round_fn = lambda res, device: int(res[device]) if res[device] > 1 else res[device]
+    for r in resources:
+        r['CPU'] = round_fn(r, 'CPU')
+        if 'GPU' in r:
+            r['GPU'] = round_fn(r, 'GPU')
+    return resources

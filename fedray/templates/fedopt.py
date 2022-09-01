@@ -1,5 +1,6 @@
-from typing import Dict, List
 import fedray
+
+from typing import Dict, List
 
 
 @fedray.node(mode='sync')
@@ -34,8 +35,7 @@ class FedOptServer:
 @fedray.node(mode='sync')
 class FedOptClient:
 
-    def __init__(self,
-                 local_epochs: int) -> None:
+    def build(self, local_epochs: int) -> None:
         self.epochs = local_epochs
     
     def run(self):

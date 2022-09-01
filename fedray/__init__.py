@@ -1,2 +1,1 @@
-from .core.node import node
-from .core.process import client_server_process
+from .core.node import FedRayNode, node

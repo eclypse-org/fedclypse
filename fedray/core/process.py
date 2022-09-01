@@ -1,93 +1,42 @@
 import ray
+import numpy as np
 
-from fedray.core._broker import FedRayBroker
+from fedray._private.broker import FedRayBroker
 from ray.util.placement_group import PlacementGroup
 from ray.util.scheduling_strategies import PlacementGroupSchedulingStrategy
 
-from typing import Any, Dict, List, Literal, Union
+from typing import Any, Dict, List, Union
+from collections import OrderedDict
 
 from fedray.util.resources import BROKER_CPU_RESOURCES
 
 
-__all__ = ['client_server_process', 'hierarchical_process', 'decentralized_process']
+class FederatedProcess(object):
 
-
-def client_server_process(server_template: Any,
-                          client_template: Any,
-                          server_id: str,
-                          client_ids: List[str],
-                          placement_group: PlacementGroup,
-                          **kwargs):
-    nodes = [{
-        'id': server_id,
-        'template': server_template,
-        'resources': placement_group.bundle_specs[1]
-    }]
-
-    for i in range(2, len(client_ids) + 2, 1):
-        nodes.append([{
-            'id': client_ids[i],
-            'template': client_template,
-            'resources': placement_group.bundle_specs[i]
-        }])
+    def __init__(self) -> None:
+        self._nodes: OrderedDict[str, Any] = OrderedDict()
+        self._broker: FedRayBroker
+        self._topology: Union[str, np.ndarray]
+        self._pg: PlacementGroup
     
-    return FedProcess(
-        mode='client-server',
-        nodes=nodes,
-        placement_group=placement_group,
-        **kwargs
-    )
-
-
-def hierarchical_process(levels_templates: List[Any],
-                         nodes_per_level: int,
-                         ):
-    pass
-
-
-def decentralized_process(node_template: Any):
-    pass
-
-
-class FedProcess(object):
-
-    def __init__(self,
-                 mode: Literal['client-server', 'hierarchical', 'decentralized'],
-                 nodes: List[Dict[str, Any]],
-                 placement_group: PlacementGroup,
-                 **kwargs) -> None:
-        
-        self._mode = mode
-        self._pg = placement_group
-        self._nodes = nodes
-        
-        if self.mode == 'client-server':
-            self._topology = 'star'
-        elif self.mode == 'hierarchical':
-            pass
-        elif self.mode == 'decentralized':
-            pass
-        
-        self._build(**kwargs)
-        
-
     def run(self) -> None:
-        pass
+        ray.get([self._nodes[k]['handle'].run.remote() for k in self._nodes])
 
     def shutdown(self) -> None:
-        pass
+        raise NotImplementedError
 
-    def _build(self, **kwargs) -> None:
-        for node_id in self.node_ids:
-            curr_node = self._nodes[node_id]
-            curr_node['handle'] = curr_node['template'].options(
-                name=node_id,
-                num_cpus=curr_node['resources']['CPU'],
-                num_gpus=curr_node['resources']['GPU'],
-                scheduling_strategy=PlacementGroupSchedulingStrategy(self._pg)
-            ).remote(**kwargs)
-        
-        self._broker: FedRayBroker = FedRayBroker.options(
+    def _build_node(self, node_id: str, **kwargs) -> None:
+        node = self._nodes[node_id]
+        node['handle'] = node['template'].options(
+            name=node_id,
+            num_cpus=node['resources']['CPU'],
+            num_gpus=node['resources']['GPU'] if 'GPU' in node['resources'] else 0,
+            scheduling_strategy=PlacementGroupSchedulingStrategy(self._pg)
+        ).remote(node_id=node_id, **kwargs)
+        return node
+    
+    def _build_broker(self) -> FedRayBroker:
+        return FedRayBroker.options(
             name='broker',
             num_cpus=BROKER_CPU_RESOURCES,
             scheduling_strategy=PlacementGroupSchedulingStrategy(self._pg)
@@ -97,13 +46,45 @@ class FedProcess(object):
         )
     
     @property
+    def num_nodes(self) -> int:
+        return len(self._nodes)
+    
+    @property
     def node_ids(self) -> List[str]:
         return self._nodes.keys()
     
     @property
     def resources(self) -> Dict[str, Dict[str, Union[int, float]]]:
-        return {self._nodes[k]['resources'] for k in self.node_ids}
-    
-    @property
-    def mode(self):
-        return self.mode
+        return {node['resources'] for node in self._nodes}
+
+
+class ClientServerProcess(FederatedProcess):
+
+    def __init__(self,
+                 server_template: Any,
+                 client_template: Any,
+                 n_clients: int,
+                 placement_group: PlacementGroup,
+                 server_config: Dict,
+                 client_config: Dict,
+                 **kwargs) -> None:
+        super().__init__()
+
+        self._pg = placement_group
+        self._topology = 'star'
+        self._nodes['server'] = {
+            'template': server_template,
+            'resources': placement_group.bundle_specs[1]
+        }
+
+        for i in range(n_clients):
+            self._nodes[f'client_{i}'] = {
+                'template': client_template,
+                'resources': placement_group.bundle_specs[i+2]
+            }
+        
+        self._broker = self._build_broker()
+        for k in self._nodes:
+            node_args = server_config if k == 'server' else client_config
+            self._nodes[k] = self._build_node(node_id=k, **node_args)
+        ray.get(self._broker.link_nodes.remote())
