@@ -1,1 +1,1 @@
-from .core.node import FedRayNode, node
+from .core.remote import remote

@@ -8,9 +8,7 @@ class Queue(_Queue, object):
     pass
 
 def pickle_queue(q):
-    # Shallow copy of __dict__ (the underlying deque isn't actually copied, so this is fast)
     q_dct = q.__dict__.copy()
-    # Remove all non-picklable synchronization primitives
     del q_dct['mutex']
     del q_dct['not_empty']
     del q_dct['not_full']
@@ -18,7 +16,6 @@ def pickle_queue(q):
     return Queue, (), q_dct
 
 def unpickle_queue(state):
-    # Recreate our queue.
     q = state[0]()
     q.mutex = threading.Lock()
     q.not_empty = threading.Condition(q.mutex)

@@ -1,21 +1,17 @@
 import ray
+from .. import remote as fedray
 import networkx as nx
 import numpy as np
-import datetime
 
-from dataclasses import field, dataclass
-
-from typing import Dict, List, Literal, Optional, Union
-
-@dataclass
-class Message:
-    type: Literal['model', 'logic'] = None
-    sender_id: str = None
-    timestamp: datetime.datetime = field(default_factory=datetime.datetime.now)
-    body: Dict = field(default_factory=dict)
+from .message import Message
 
 
-@ray.remote(max_concurrency=1000)
+from typing import Dict, List, Optional, Union
+
+BROKER_CPU_RESOURCES = 0.05
+
+
+@fedray.remote(num_cpus=BROKER_CPU_RESOURCES)
 class FedRayBroker:
 
     def __init__(self,

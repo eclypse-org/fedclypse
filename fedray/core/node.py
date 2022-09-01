@@ -1,22 +1,13 @@
 import ray
 
-from .._private.broker import FedRayBroker, Message
-from .._private.queue import Queue
+from ._private.broker import FedRayBroker, Message
+from ._private.queue import Queue
 
 from functools import cached_property
 from typing import Dict, List, Literal, Optional, Union
 
-MAX_CONCURRENCY = 1000
 
-
-def node(*args, **kwargs):
-    if len(kwargs) == 0:
-        return ray.remote(max_concurrency=MAX_CONCURRENCY)(*args)
-    else:
-        return lambda fn_or_class: ray.remote(max_concurrency=MAX_CONCURRENCY, **kwargs)(fn_or_class)
-
-
-class FedRayNode:
+class FedRayNode(object):
 
     def __init__(self, 
                  node_id: str,

@@ -1,4 +1,5 @@
 import ray
+from ..core._private.broker import BROKER_CPU_RESOURCES
 from ray import tune
 import random
 
@@ -6,7 +7,6 @@ from ray.util.placement_group import placement_group, PlacementGroup
 
 from typing import Dict, List, Literal, Union
 
-BROKER_CPU_RESOURCES = 0.05
 SAFETY_EPSILON = 0.01
 
 
