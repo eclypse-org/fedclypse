@@ -1,7 +1,12 @@
 from dataclasses import field, dataclass
 import datetime
 
-from typing import Dict, Literal
+from typing import Dict
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
+
 
 @dataclass
 class Message:
