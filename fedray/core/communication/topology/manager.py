@@ -1,11 +1,16 @@
-import ray, fedray
+# -*- coding: utf-8 -*-
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Union
+
 import networkx as nx
 import numpy as np
-
+import ray
 from ray.util.scheduling_strategies import PlacementGroupSchedulingStrategy
-from ..message import Message
 
-from typing import Dict, List, Optional, Union
+import fedray
+from ..message import Message
 
 
 TP_MANAGER_CPU_RESOURCES = 0.05

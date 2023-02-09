@@ -1,6 +1,8 @@
-import fedray
+# -*- coding: utf-8 -*-
+from typing import Dict
+from typing import List
 
-from typing import Dict, List
+import fedray
 
 
 class FedOptClient:

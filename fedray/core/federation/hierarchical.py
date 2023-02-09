@@ -1,10 +1,14 @@
-import numpy as np
+# -*- coding: utf-8 -*-
+from typing import Dict
+from typing import List
+from typing import Type
+from typing import Union
 
-from fedray.core.node.fedray_node import FedRayNode
-from fedray.core.federation import Federation
+import numpy as np
 from ray.util.placement_group import PlacementGroup
 
-from typing import Type, Dict, List, Union
+from fedray.core.federation import Federation
+from fedray.core.node.fedray_node import FedRayNode
 
 
 class HierarchicalFederation(Federation):

@@ -1,6 +1,11 @@
-import ray, time, fedray
-from fedray.core.node import FedRayNode
+# -*- coding: utf-8 -*-
+import time
+
+import ray
+
+import fedray
 from fedray.core.federation import ClientServerFederation
+from fedray.core.node import FedRayNode
 
 
 @fedray.remote

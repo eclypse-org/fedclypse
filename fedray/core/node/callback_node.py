@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .fedray_node import FedRayNode
 
 
