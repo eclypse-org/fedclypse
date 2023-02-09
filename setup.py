@@ -41,6 +41,7 @@ setuptools.setup(
     python_requires=">=3.7,<3.11",
     install_requires=[
         "ray[tune]",
+        "numpy",
         "networkx",
     ],
     include_package_data=True,
