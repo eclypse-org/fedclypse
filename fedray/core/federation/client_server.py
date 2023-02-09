@@ -1,13 +1,20 @@
-import ray, threading
+# -*- coding: utf-8 -*-
+import threading
+from typing import Dict
+from typing import List
+from typing import Literal
+from typing import Optional
+from typing import Type
+from typing import Union
+
 import numpy as np
 import ray
-
 from ray.util.placement_group import PlacementGroup
-from fedray.core.communication.topology.manager import _get_or_create_topology_manager
-from fedray.core.node import FedRayNode, VirtualNode
-from fedray.core.federation import Federation
 
-from typing import Dict, List, Literal, Optional, Type, Union
+from fedray.core.communication.topology.manager import _get_or_create_topology_manager
+from fedray.core.federation import Federation
+from fedray.core.node import FedRayNode
+from fedray.core.node import VirtualNode
 
 
 class ClientServerFederation(Federation):

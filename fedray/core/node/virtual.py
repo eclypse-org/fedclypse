@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
+from typing import Dict
+from typing import Type
+
 from ray.util.placement_group import PlacementGroup
 from ray.util.scheduling_strategies import PlacementGroupSchedulingStrategy
 
 from .fedray_node import FedRayNode
-from typing import Dict, Type
 
 
 class VirtualNode(object):

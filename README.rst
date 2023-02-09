@@ -1,8 +1,8 @@
 .. image:: docs/images/fedray_logo_name_color.png
 
-FedRay is a framework for Research in Federated Learning based on Ray. FedRay allows to 
-easily implement your FL algorithms or use off-the-shelf algorithms, and distribute 
-them seamlessly on Ray Clusters. 
+FedRay is a framework for Research in Federated Learning based on Ray. FedRay allows to
+easily implement your FL algorithms or use off-the-shelf algorithms, and distribute
+them seamlessly on Ray Clusters.
 
 FedRay is a research project, and it is still under development.
 

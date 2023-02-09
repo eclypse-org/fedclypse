@@ -1,4 +1,8 @@
-import setuptools, codecs, os
+# -*- coding: utf-8 -*-
+import codecs
+import os
+
+import setuptools
 
 with open("README.rst", "r") as fh:
     long_description = fh.read()

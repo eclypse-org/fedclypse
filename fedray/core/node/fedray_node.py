@@ -1,13 +1,25 @@
-import ray, copy, time, copyreg, threading, pickle, queue, time
-
-from queue import Queue as _Queue
-from queue import Full
+# -*- coding: utf-8 -*-
+import copy
+import copyreg
+import queue
+import threading
+import time
 from functools import cached_property
+from queue import Full
+from queue import Queue as _Queue
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Literal
+from typing import Optional
+from typing import Tuple
+from typing import Union
 
-from fedray.core.communication.topology.manager import TopologyManager, Message
+import ray
+
+from fedray.core.communication.topology.manager import Message
+from fedray.core.communication.topology.manager import TopologyManager
 from fedray.util.exceptions import EndProcessException
-
-from typing import Any, Dict, List, Literal, Optional, Tuple, Union
 
 
 class FedRayNode(object):
@@ -135,7 +147,7 @@ class FedRayNode(object):
 
     def test(
         self, phase: Literal["train", "eval", "test"], **kwargs
-    ) -> Tuple(float, int):
+    ) -> Tuple[float, int]:
         """Implements the core logic of a node within a test process. It is
         called by the federation when the test session starts.
 
