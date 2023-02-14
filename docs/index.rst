@@ -1,43 +1,41 @@
-.. fedray documentation master file, created by
-   sphinx-quickstart on Tue Dec  6 17:22:18 2022.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. toctree::
+   :maxdepth: 2
+   :hidden:
 
-Welcome to fedray's documentation!
-==================================
+   Getting Started <self>
+   Tutorials <source/tutorials/index.rst>
+   FedRay Core API <source/core-api/index.rst>
 
-..  toctree::
-   :maxdepth: 1
-   :caption: fedray tutorials
+.. image:: _static/images/fedray_logo_name_color.png
 
-   Example Tutorial <example>
+===============================================
 
-
-.. currentmodule:: fedray
-
-.. autosummary::
-    :toctree: generated
-
-   remote
+Welcome to the `FedRay <https://github.com/vdecaro/fedray>`_ documentation! 
 
 
-fedray.process
-==================================
+Why FedRay?
+===========
+FedRay is **a framework for Research in Federated 
+Learning based on Ray**. It allows to easily *implement your FL algorithms* or *use 
+off-the-shelf algorithms*, and distribute them seamlessly on Ray Clusters.
 
-.. currentmodule:: fedray.process
-
-.. autosummary::
-    :toctree: generated
-
-   ClientServerProcess
-   DecentralizedProcess
-   FederatedProcess
-   HierarchicalProcess
+FedRay is a research project, and it is still under development.
 
 
-Indices and tables
-==================
+.. _getting-started:
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+Getting Started
+===============
+To get started, you can easily install FedRay by running the following commands:
+
+.. code-block:: bash
+
+   pip install git+https://github.com/vdecaro/fedray
+
+To ensure that the installation was successful, you can execute this simple python 
+script:
+
+.. code-block:: python
+
+   import fedray
+   print(fedray.__version__)

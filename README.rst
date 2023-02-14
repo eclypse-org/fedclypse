@@ -18,7 +18,8 @@ FedRay can be installed by cloning the repository and running the setup script.
 
 Documentation
 -------------
-Stay tuned, the documentation will be available soon!
+The documentation is hosted on ReadTheDocs and can be found 
+`here <https://fedray.readthedocs.io/en/latest/>`_.
 
 License
 -------

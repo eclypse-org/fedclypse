@@ -26,37 +26,37 @@ class FedRayNode(object):
     """Base class for a node in a federation.
 
     It provides all the base functionalities to allow a node to interact with the
-    federation. It is not meant to be used directly, but rather to be subclassed
-    by the user to define a custom node.
+    federation. **It is not meant to be used directly, but rather to be subclassed
+    by the user to define a custom node**.
 
-    While subclassing, the user can implement the build, train and test methods function.
+    While subclassing, the user can implement the ``build``, ``train`` and ``test``
+    methods.
 
+    The ``train`` method is called when the federation starts the training process. It
+    is responsible for the internal logic of the node along the training process (e.g.,
+    local training and aggregation for client and server nodes respectively).
 
-    The user must implement the train function, which is called when the federation
-    starts the training process. The train function is responsible for the internal
-    logic of the node (e.g., local training and aggregation for client and server nodes
-    respectively).
-
-    The user can also implement the test function, which is called to perform a round of
-    evaluation on the federation.
+    The ``test`` function is called to perform a round of evaluation on the federation.
 
     The communication between nodes happens only within the train function by using
-    the `send` and `receive` methods. The send function is used to send a message to a
-    specific node, while the receive function is used to receive a message from a
-    specific node. The send and receive functions are blocking, meaning that the
-    execution of the train function is paused until the message is received or sent.
+    the ``send`` and ``receive`` methods. The ``send`` method is used to broadcast a
+    message to the neighbors in the topology, or to a specific node. The ``receive``
+    method is used to get or wait for a message from the input queue. The ``receive``
+    method is **optionally** blocking, thus allowing to implement asynchronous behavior
+    of the node.
     """
 
-    def __init__(self, node_id: str, role: str, federation_id: str = "", **kwargs):
+    def __init__(self, node_id: str, role: str, federation_id: str = "", **build_args):
         """Creates a node in the federation. Must not be called directly or overridden.
+
         Args:
             node_id (str): The id of the node.
             role (str): The role of the node. It must be either a single role in
-                {"train", "eval", "test"}, or a combination of them as a dash-separated
+                ``["train", "eval", "test"]``, or a combination of them as a dash-separated
                 string. For example, "train-eval" or "train-eval-test".
             federation_id (str): The id of the federation the node belongs to.
                 Defaults to "".
-            **kwargs: Additional arguments to be passed to the build function.
+            **build_args: Additional arguments to be passed to the build function.
         """
         # Node hyperparameters
         self._fed_id: str = federation_id
@@ -73,21 +73,25 @@ class FedRayNode(object):
         self._node_metrics: Dict[str, Any] = {}
 
         # Buildup function
-        self._node_config = kwargs
-        self.build(**kwargs)
+        self._node_config = build_args
+        self.build(**build_args)
 
-    def build(self, **kwargs):
+    def build(self, **build_args):
         """
-        Performs the setup of the node's environment when the node is added to a
-        federation. The build function and has a twofold purpose:
-            1. Define here the attributes that are independent from whether the node is
-            executing the training function or the test function (e.g., choosing the
-            optimizer, the loss function, etc.);
-            2. Perform all the resource-intensive operations in advance (e.g.,
-            downloading the data from an external source, or instantiating a model with
-            computationally-intensive techniques) to avoid bottlenecks within the
-            training and test processes.
-        Since it is called within the __init__ function, the user can define additional
+        Performs the setup of the node's environment when the node is added to
+        a federation.
+
+        The build method and has a twofold purpose.
+
+        **Define object-level attributes**. This encloses attributes that are independent
+        from whether the node is executing the training method or the test method (e.g.,
+        choosing the optimizer, the loss function, etc.).
+
+        **Perform all the resource-intensive operations in advance to avoid bottlenecks**.
+        An example can be downloading the data from an external source, or instantiating
+        a model with computationally-intensive techniques.
+
+        Since it is called within the ``__init__`` method, the user can define additional
         class attributes.
 
         An example of build function can be the following:
@@ -163,8 +167,7 @@ class FedRayNode(object):
         raise NotImplementedError
 
     def send(self, header: str, body: Dict, to: Optional[Union[str, List[str]]] = None):
-        """
-        Sends a message to a specific node or to the neighbor nodes in the federation.
+        """Sends a message to a specific node or to the neighbor nodes in the federation.
 
         Args:
             header (str): The header of the message.
@@ -180,11 +183,10 @@ class FedRayNode(object):
         ray.get([self._tp_manager.forward.remote(msg, to)])
 
     def receive(self, timeout: Optional[float] = None) -> Message:
-        """
-        Receives a message from the message queue. If the timeout value is defined, it
-        waits for a message for the specified amount of time. If no message is received
-        within the timeout, it returns None. This allows to implement a node with an
-        asynchronous behavior.
+        """Receives a message from the message queue. If the timeout value is defined,
+        it waits for a message for the specified amount of time. If no message is
+        received within the timeout, it returns None. This allows to implement a node
+        with an asynchronous behavior.
 
         Args:
             timeout (Optional[float], optional): The timeout value. Defaults to None.
@@ -207,10 +209,9 @@ class FedRayNode(object):
         return msg
 
     def update_version(self, **kwargs):
-        """
-        Updates the node's version. Whenever this function is called, the version is
+        """Updates the node's version. Whenever this function is called, the version is
         stored in an internal queue. The version is pulled from the queue whever the
-        federation calls the `pull_version` method.
+        federation calls the ``pull_version`` method.
         """
         to_save = {k: copy.deepcopy(v) for k, v in kwargs.items()}
         version_dict = {

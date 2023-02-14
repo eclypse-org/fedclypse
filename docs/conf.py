@@ -5,6 +5,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 import os
 import sys
+from datetime import datetime
 
 sys.path.insert(0, os.path.abspath(".."))
 
@@ -12,10 +13,10 @@ import fedray
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-project = "fedray"
-copyright = "2022, Valerio De Caro"
+project = "FedRay"
+copyright = str(datetime.now().year) + ", Valerio De Caro"
 author = "Valerio De Caro"
-release = "0.0.1"
+release = fedray.__version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -28,17 +29,29 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.coverage",
     "sphinx.ext.napoleon",
-    "sphinx_rtd_theme",
+    "sphinx_book_theme",
 ]
 
-templates_path = ["_templates"]
+
+# templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 coverage_show_missing_items = True
-autosummary_generate = True
-
+# Automatically extract typehints when specified and place them in
+# descriptions of the relevant function/method.
+autodoc_typehints = "description"
+autodoc_member_order = "bysource"
+# Don't show class signature with the class' name.
+autodoc_class_signature = "separated"
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "sphinx_rtd_theme"
-html_static_path = ["_static"]
+html_theme = "sphinx_book_theme"
+html_title = "Version " + release
+html_logo = "images/fedray_logo_name_color.png"
+# html_sidebars = {"Federation": ["generated/fedray.core.federation.Federation.rst"]}
+html_theme_options = {
+    "repository_url": "https://github.com/vdecaro/fedray",
+    "use_repository_button": True,
+    "collapse_navigation": False,
+}

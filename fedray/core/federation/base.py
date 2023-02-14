@@ -89,7 +89,9 @@ class Federation(object):
         raise ValueError(f"Identifier {node_id} not found in process.")
 
     def train(self, blocking: bool = False, **train_args):
-        """Trains the models in the federation.
+        """
+        Trains the models in the federation.
+
         This method is responsible for dispatching the arguments of the training
         algorithm to the nodes. It then starts the training algorithm on the nodes,
         and returns the results of the training.
@@ -97,7 +99,9 @@ class Federation(object):
         raise NotImplementedError
 
     def test(self, phase: Literal["train", "eval", "test"], **kwargs) -> List:
-        """Tests the models in the federation.
+        """
+        Tests the models in the federation.
+
         This method is responsible for dispatching the arguments of the testing
         algorithm to the nodes. It then starts the testing algorithm on the nodes,
         and returns the results of the testing.
@@ -107,7 +111,9 @@ class Federation(object):
     def pull_version(
         self, node_ids: Union[str, List[str]], timeout: Optional[float] = None
     ) -> Union[List, Dict]:
-        """Pulls the version of the nodes with the given IDs.
+        """
+        Pulls the version of the nodes with the given IDs.
+
         Args:
             node_ids (Union[str, List[str]]): The IDs of the nodes to pull the
                 version from.
@@ -134,7 +140,8 @@ class Federation(object):
                 return new_versions[0] if len(to_pull) == 1 else new_versions
 
     def send(self, header: str, body: Dict, to: Optional[Union[str, List[str]]] = None):
-        """Sends a message to the nodes with the given IDs.
+        """
+        Sends a message to the nodes with the given IDs.
 
         This method is useful whenever the user wishes to interact with the nodes in the
         federation during the training process. For example, the user can send a message

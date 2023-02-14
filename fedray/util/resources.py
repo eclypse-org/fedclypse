@@ -18,7 +18,8 @@ def get_resources_split(
 ):
     """
     Provides the resources for a federation. The resources are provided as a
-    PlacementGroup or a PlacementGroupFactory (if is_tune is True).
+    PlacementGroup or a PlacementGroupFactory (if is_tune is True). This function
+    allows to simulate the system heterogeneity across nodes.
 
     Given the number of nodes, cpus, gpus and split strategy, this function creates a
     set of bundles (i.e., dictionaries containing splits of the resources, one split
@@ -34,9 +35,8 @@ def get_resources_split(
             it is set to the number of GPUs available in the cluster. Defaults to None.
         split_strategy (Literal["random", "uniform"], optional): The strategy to split
             the resources. Defaults to "uniform".
-        placement_strategy (Literal["STRICT_PACK", "PACK", "STRICT_SPREAD", "SPREAD"],
-            optional): The strategy to place the nodes in the cluster. Defaults to
-            "PACK".
+        placement_strategy (Literal["STRICT_PACK", "PACK", "STRICT_SPREAD", "SPREAD"], optional): The
+            strategy to place the nodes in the cluster. Defaults to "PACK".
         is_tune (bool, optional): Whether the resources are used within a Ray Tune
             experiment.
 
