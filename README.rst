@@ -1,4 +1,4 @@
-.. image:: docs/images/fedray_logo_name_color.png
+.. image:: docs/_static/images/fedray_logo_name_color.png
 
 FedRay is a framework for Research in Federated Learning based on Ray. FedRay allows to
 easily implement your FL algorithms or use off-the-shelf algorithms, and distribute
@@ -18,7 +18,8 @@ FedRay can be installed by cloning the repository and running the setup script.
 
 Documentation
 -------------
-Stay tuned, the documentation will be available soon!
+The documentation is hosted on ReadTheDocs and can be found 
+`here <https://fedray.readthedocs.io/en/latest/>`_.
 
 License
 -------
